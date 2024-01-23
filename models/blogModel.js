@@ -5,13 +5,13 @@ const blogSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please input blog title"],
-    min: 8,
-    max: 255,
+    minLength: [8, "The title must have at least 8 characters"],
+    maxLength: [255, "The title cannot have more than 255 characters"],
   },
   content: {
     type: String,
     required: [true, "Please input blog content"],
-    min: 50,
+    minLength: [50, "There must be at least 50 characters in the blog content"],
   },
   author: {
     type: mongoose.Schema.ObjectId,

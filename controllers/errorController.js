@@ -41,11 +41,16 @@ const handleDuplicateErrorDb = (error) => {
   return new AppError(message, 400);
 };
 
-const handleValidationErrorDb = (error) => {
+const handleValidationErrorDb = (error, res) => {
   const errors = Object.values(error.errors).map((el) => el.message);
+  console.log(error);
   const message = `Invalid input data. ${errors.join(". ")}`;
-
-  return new AppError(message, 400);
+  console.log("in ehre too");
+  console.log(message);
+  return res.status(400).json({
+    status: "fail",
+    message,
+  });
 };
 
 const handleCastErrorDb = (error) => {
@@ -71,17 +76,19 @@ const errorHandler = (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
+    console.log({ error });
+
     if (error.name === "CastError") {
       error = handleCastErrorDb(error);
-    }
-    if (error.code === 11000) {
+    } else if (error.code === 11000) {
       error = handleDuplicateErrorDb(error);
+    } else if (error._message === "Validation failed") {
+      err = handleValidationErrorDb(err, res);
+    } else if (error.reason.toString().startsWith("BSONError")) {
+      error = handleCastErrorDb(error);
+    } else {
+      sendErrorProd(error, res);
     }
-    if (error.name === "validationError") {
-      error = handleValidationErrorDb(error);
-    }
-
-    sendErrorProd(error, res);
   }
 };
 
