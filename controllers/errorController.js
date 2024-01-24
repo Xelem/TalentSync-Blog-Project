@@ -84,8 +84,6 @@ const errorHandler = (err, req, res, next) => {
       error = handleDuplicateErrorDb(error);
     } else if (error._message === "Validation failed") {
       err = handleValidationErrorDb(err, res);
-    } else if (error.reason.toString().startsWith("BSONError")) {
-      error = handleCastErrorDb(error);
     } else {
       sendErrorProd(error, res);
     }
