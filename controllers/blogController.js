@@ -5,7 +5,7 @@ exports.createBlog = catchAsyncError(async (req, res, next) => {
   const blog = {
     title: req.body.title,
     content: req.body.content,
-    author: req.user._id,
+    author: req.user._id.toString(),
   };
   const { error } = validateBlog(blog);
   if (error) return next(new AppError(error.message, 400));
