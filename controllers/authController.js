@@ -10,7 +10,6 @@ exports.verifyJwtToken = catchAsyncError(async function (req, res, next) {
   user = await User.findById(user._id);
 
   if (!user) return next(new AppError("You are not logged in", 401));
-  console.log("The user is", user);
   req.user = user;
   next();
 });

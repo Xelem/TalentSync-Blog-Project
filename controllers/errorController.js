@@ -3,7 +3,6 @@ class AppError extends Error {
     super(message);
     this.statusCode = statusCode;
     this.status = `${statusCode.toString().startsWith("4") ? "fail" : "error"}`;
-    console.log("status", this.status);
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
@@ -43,10 +42,7 @@ const handleDuplicateErrorDb = (error) => {
 
 const handleValidationErrorDb = (error, res) => {
   const errors = Object.values(error.errors).map((el) => el.message);
-  console.log(error);
   const message = `Invalid input data. ${errors.join(". ")}`;
-  console.log("in ehre too");
-  console.log(message);
   return res.status(400).json({
     status: "fail",
     message,
@@ -75,9 +71,6 @@ const errorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
-    // let error = { ...err };
-    // console.log({ error });
-
     if (err.name === "CastError") {
       err = handleCastErrorDb(err);
     } else if (err.code === 11000) {
