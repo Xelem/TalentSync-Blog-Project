@@ -75,17 +75,17 @@ const errorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
-    let error = { ...err };
-    console.log({ error });
+    // let error = { ...err };
+    // console.log({ error });
 
-    if (error.name === "CastError") {
-      error = handleCastErrorDb(error);
-    } else if (error.code === 11000) {
-      error = handleDuplicateErrorDb(error);
-    } else if (error._message === "Validation failed") {
+    if (err.name === "CastError") {
+      err = handleCastErrorDb(err);
+    } else if (err.code === 11000) {
+      err = handleDuplicateErrorDb(err);
+    } else if (err._message === "Validation failed") {
       err = handleValidationErrorDb(err, res);
     } else {
-      sendErrorProd(error, res);
+      sendErrorProd(err, res);
     }
   }
 };
